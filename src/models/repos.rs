@@ -324,3 +324,16 @@ pub struct GitTag {
     pub url: Url,
     pub message: String,
 }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DeployKey {
+    pub id: u64,
+    pub key: String,
+    pub url: Url,
+    pub title: String,
+    pub verified: bool,
+    pub created_at: DateTime<Utc>,
+    pub read_only: bool,
+    pub added_by: Option<String>,
+    pub last_used: Option<DateTime<Utc>>
+}

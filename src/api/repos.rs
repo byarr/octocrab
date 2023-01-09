@@ -13,6 +13,7 @@ pub mod releases;
 mod stargazers;
 mod status;
 mod tags;
+mod deploy_keys;
 
 use crate::{models, params, Octocrab, Result};
 pub use commits::ListCommitsBuilder;
@@ -24,6 +25,7 @@ pub use stargazers::ListStarGazersBuilder;
 pub use status::{CreateStatusBuilder, ListStatusesBuilder};
 pub use tags::ListTagsBuilder;
 pub use branches::ListBranchesBuilder;
+use crate::repos::deploy_keys::ListDeployKeysBuilder;
 
 /// Handler for GitHub's repository API.
 ///
@@ -521,4 +523,10 @@ impl<'octo> RepoHandler<'octo> {
         ))?;
         self.crab._get(url, None::<&()>).await
     }
+
+    /// List the deploy keys for this repository
+    pub fn list_deploy_keys(&self) -> ListDeployKeysBuilder<'_, '_> {
+        ListDeployKeysBuilder::new(self)
+    }
+
 }

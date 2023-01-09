@@ -1,0 +1,13 @@
+[
+  {
+    "id": 243243243,
+    "key": "ssh-ed25519 BBBBC3NzaC1lZDI1NTE5BBBBIGMqhDgPeBG9oVxbo5jfoidh7h96m1am8HJJA76V+jPJ",
+    "url": "https://api.github.com/repos/org/repo/keys/243243243",
+    "title": "MyDeployKey",
+    "verified": true,
+    "created_at": "2023-01-06T11:56:18Z",
+    "read_only": true,
+    "last_used": "2023-01-06T11:58:49Z",
+    "added_by": "jdoe"
+  }
+]
