@@ -111,7 +111,7 @@ async fn get_key_should_return_key() {
     );
 
     let key = result.unwrap();
-    assert_eq!(expected_key(), key);
+    assert_eq!(Some(expected_key()), key);
 }
 
 
@@ -121,8 +121,8 @@ async fn get_key_should_handle_404() {
     let mock_server = setup_get_key_api("243243243", template).await;
     let octo = setup_octocrab(&mock_server.uri());
     let repos = octo.repos(OWNER.to_owned(), REPO.to_owned());
-    let result = repos.get_deploy_key("243243243").await;
-    assert!(result.is_err());
+    let key = repos.get_deploy_key("243243243").await.unwrap();
+    assert!(key.is_none());
 }
 
 

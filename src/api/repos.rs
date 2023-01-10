@@ -1,6 +1,7 @@
 //! The repositories API.
 
 use reqwest::header::ACCEPT;
+use snafu::{Backtrace, GenerateImplicitData};
 
 mod branches;
 mod commits;
@@ -15,7 +16,7 @@ mod status;
 mod tags;
 mod deploy_keys;
 
-use crate::{models, params, Octocrab, Result};
+use crate::{models, params, Octocrab, Result, FromResponse};
 pub use commits::ListCommitsBuilder;
 pub use file::{GetContentBuilder, UpdateFileBuilder, DeleteFileBuilder};
 pub use generate::GenerateRepositoryBuilder;
@@ -25,6 +26,7 @@ pub use stargazers::ListStarGazersBuilder;
 pub use status::{CreateStatusBuilder, ListStatusesBuilder};
 pub use tags::ListTagsBuilder;
 pub use branches::ListBranchesBuilder;
+use crate::models::repos::DeployKey;
 use crate::repos::deploy_keys::ListDeployKeysBuilder;
 
 /// Handler for GitHub's repository API.
@@ -529,14 +531,19 @@ impl<'octo> RepoHandler<'octo> {
         ListDeployKeysBuilder::new(self)
     }
 
-    pub async fn get_deploy_key(&self, id: impl AsRef<str>) -> Result<models::repos::DeployKey> {
-        let url = format!(
+    pub async fn get_deploy_key(&self, id: impl AsRef<str>) -> Result<Option<models::repos::DeployKey>> {
+        let url = self.crab.absolute_url(format!(
             "repos/{owner}/{repo}/keys/{id}",
             owner = self.owner,
             repo = self.repo,
             id = id.as_ref()
-        );
-        self.crab.get(url, None::<&()>).await
+        ))?;
+        let response = self.crab._get(url, None::<&()>).await?;
+        if response.status().as_u16() == 404 {
+            return Ok(None)
+        }
+        let deploy_key = DeployKey::from_response(crate::map_github_error(response).await?).await?;
+        Ok(Some(deploy_key))
     }
 
 }
