@@ -529,4 +529,14 @@ impl<'octo> RepoHandler<'octo> {
         ListDeployKeysBuilder::new(self)
     }
 
+    pub async fn get_deploy_key(&self, id: impl AsRef<str>) -> Result<models::repos::DeployKey> {
+        let url = format!(
+            "repos/{owner}/{repo}/keys/{id}",
+            owner = self.owner,
+            repo = self.repo,
+            id = id.as_ref()
+        );
+        self.crab.get(url, None::<&()>).await
+    }
+
 }
